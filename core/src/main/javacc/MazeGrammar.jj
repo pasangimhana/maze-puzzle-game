@@ -1,0 +1,105 @@
+options {
+  STATIC = false;
+}
+
+PARSER_BEGIN(MazeParser)
+package org.maze.core.io;
+
+import org.maze.core.game.GameConfig;
+
+public class MazeParser {
+  public void parse(GameConfig gameConfig) throws ParseException {
+    size(gameConfig);
+    start(gameConfig);
+    goal(gameConfig);
+    while (true) {
+      try {
+        item(gameConfig);
+      } catch (ParseException e) {
+        try {
+          obstacle(gameConfig);
+        } catch (ParseException e2) {
+          break;
+        }
+      }
+    }
+  }
+}
+PARSER_END(MazeParser)
+
+SKIP : {
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN : {
+  < SIZE: "size" >
+| < START: "start" >
+| < GOAL: "goal" >
+| < ITEM: "item" >
+| < OBSTACLE: "obstacle" >
+| < COLON: ":" >
+| < COMMA: "," >
+| < NUMBER: (["0"-"9"])+ >
+| < IDENTIFIER: ["a"-"z","A"-"Z"] (["a"-"z","A"-"Z","0"-"9"])* >
+}
+
+void size(GameConfig gameConfig) :
+{
+  Token width, height;
+}
+{
+  <SIZE> <COLON> width=<NUMBER> <COMMA> height=<NUMBER>
+  {
+    gameConfig.setWidth(Integer.parseInt(width.image));
+    gameConfig.setHeight(Integer.parseInt(height.image));
+  }
+}
+
+void start(GameConfig gameConfig) :
+{
+  Token x, y;
+}
+{
+  <START> <COLON> x=<NUMBER> <COMMA> y=<NUMBER>
+  {
+    gameConfig.setStartX(Integer.parseInt(x.image));
+    gameConfig.setStartY(Integer.parseInt(y.image));
+  }
+}
+
+void goal(GameConfig gameConfig) :
+{
+  Token x, y;
+}
+{
+  <GOAL> <COLON> x=<NUMBER> <COMMA> y=<NUMBER>
+  {
+    gameConfig.setGoalX(Integer.parseInt(x.image));
+    gameConfig.setGoalY(Integer.parseInt(y.image));
+  }
+}
+
+void item(GameConfig gameConfig) :
+{
+  Token name, x, y;
+}
+{
+  <ITEM> <COLON> name=<IDENTIFIER> <COMMA> x=<NUMBER> <COMMA> y=<NUMBER>
+  {
+    gameConfig.addItem(name.image, Integer.parseInt(x.image), Integer.parseInt(y.image));
+  }
+}
+
+void obstacle(GameConfig gameConfig) :
+{
+  Token x, y;
+}
+{
+  <OBSTACLE> <COLON> x=<NUMBER> <COMMA> y=<NUMBER>
+  {
+    gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
+  }
+}

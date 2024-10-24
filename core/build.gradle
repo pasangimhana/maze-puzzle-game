@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'ca.coglinc.javacc' version '2.4.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.java.dev.javacc:javacc:7.0.10'
+    // Add other dependencies as needed
+}
+
+application {
+    mainClass = 'org.maze.core.Main'
+}
+
+compileJavacc {
+    inputDirectory = file('src/main/javacc')
+    outputDirectory = file('src/main/java/org/maze/core/io')
+    include '**/*.jj'
+}
+
+compileJava {
+    dependsOn compileJavacc
+}
+
+run {
+    standardInput = System.in
+}
+
+// The following sourceSets block is no longer needed as we're using the standard directory layout
+// sourceSets {
+//     main {
+//         java {
+//             srcDirs = ['']
+//         }
+//     }
+// }
+
+
+
+
+
+
+

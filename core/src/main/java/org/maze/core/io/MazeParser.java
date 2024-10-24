@@ -3,73 +3,178 @@
 package org.maze.core.io;
 
 import org.maze.core.game.GameConfig;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MazeParser implements MazeParserConstants {
   public void parse(GameConfig gameConfig) throws ParseException {
+    configuration(gameConfig);
+  }
+
+  final public void configuration(GameConfig gameConfig) throws ParseException {
     size(gameConfig);
     start(gameConfig);
     goal(gameConfig);
+    label_1:
     while (true) {
-      try {
-        item(gameConfig);
-      } catch (ParseException e) {
-        try {
-          obstacle(gameConfig);
-        } catch (ParseException e2) {
-          break;
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case ITEM:
+      case OBSTACLE:
+      case SCRIPT:
+      case PLUGIN:{
+        ;
+        break;
         }
+      default:
+        jj_la1[0] = jj_gen;
+        break label_1;
+      }
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case ITEM:{
+        item(gameConfig);
+        break;
+        }
+      case OBSTACLE:{
+        obstacle(gameConfig);
+        break;
+        }
+      case SCRIPT:{
+        script(gameConfig);
+        break;
+        }
+      case PLUGIN:{
+        plugin(gameConfig);
+        break;
+        }
+      default:
+        jj_la1[1] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
       }
     }
+    jj_consume_token(0);
   }
 
   final public void size(GameConfig gameConfig) throws ParseException {Token width, height;
     jj_consume_token(SIZE);
-    jj_consume_token(COLON);
+    jj_consume_token(LPAREN);
     width = jj_consume_token(NUMBER);
     jj_consume_token(COMMA);
     height = jj_consume_token(NUMBER);
+    jj_consume_token(RPAREN);
 gameConfig.setWidth(Integer.parseInt(width.image));
     gameConfig.setHeight(Integer.parseInt(height.image));
   }
 
   final public void start(GameConfig gameConfig) throws ParseException {Token x, y;
     jj_consume_token(START);
-    jj_consume_token(COLON);
+    jj_consume_token(LPAREN);
     x = jj_consume_token(NUMBER);
     jj_consume_token(COMMA);
     y = jj_consume_token(NUMBER);
+    jj_consume_token(RPAREN);
 gameConfig.setStartX(Integer.parseInt(x.image));
     gameConfig.setStartY(Integer.parseInt(y.image));
   }
 
   final public void goal(GameConfig gameConfig) throws ParseException {Token x, y;
     jj_consume_token(GOAL);
-    jj_consume_token(COLON);
+    jj_consume_token(LPAREN);
     x = jj_consume_token(NUMBER);
     jj_consume_token(COMMA);
     y = jj_consume_token(NUMBER);
+    jj_consume_token(RPAREN);
 gameConfig.setGoalX(Integer.parseInt(x.image));
     gameConfig.setGoalY(Integer.parseInt(y.image));
   }
 
-  final public void item(GameConfig gameConfig) throws ParseException {Token name, x, y;
+  final public void item(GameConfig gameConfig) throws ParseException {Token name, message;
+  List positions = new ArrayList();
     jj_consume_token(ITEM);
-    jj_consume_token(COLON);
-    name = jj_consume_token(IDENTIFIER);
-    jj_consume_token(COMMA);
-    x = jj_consume_token(NUMBER);
-    jj_consume_token(COMMA);
-    y = jj_consume_token(NUMBER);
-gameConfig.addItem(name.image, Integer.parseInt(x.image), Integer.parseInt(y.image));
+    name = jj_consume_token(QUOTED_STRING);
+    jj_consume_token(LBRACE);
+    jj_consume_token(AT);
+    positionList(positions);
+    jj_consume_token(MESSAGE);
+    message = jj_consume_token(QUOTED_STRING);
+    jj_consume_token(RBRACE);
+gameConfig.addItem(name.image.substring(1, name.image.length() - 1), positions, message.image.substring(1, message.image.length() - 1));
   }
 
-  final public void obstacle(GameConfig gameConfig) throws ParseException {Token x, y;
+  final public void obstacle(GameConfig gameConfig) throws ParseException {List positions = new ArrayList();
+  List requirements = new ArrayList();
     jj_consume_token(OBSTACLE);
-    jj_consume_token(COLON);
+    jj_consume_token(LBRACE);
+    jj_consume_token(AT);
+    positionList(positions);
+    jj_consume_token(REQUIRES);
+    requirementList(requirements);
+    jj_consume_token(RBRACE);
+gameConfig.addObstacle(positions, requirements);
+  }
+
+  final public void positionList(List positions) throws ParseException {Token x, y;
+    jj_consume_token(LPAREN);
     x = jj_consume_token(NUMBER);
     jj_consume_token(COMMA);
     y = jj_consume_token(NUMBER);
-gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
+    jj_consume_token(RPAREN);
+positions.add(new GameConfig.Position(Integer.parseInt(x.image), Integer.parseInt(y.image)));
+    label_2:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case COMMA:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[2] = jj_gen;
+        break label_2;
+      }
+      jj_consume_token(COMMA);
+      jj_consume_token(LPAREN);
+      x = jj_consume_token(NUMBER);
+      jj_consume_token(COMMA);
+      y = jj_consume_token(NUMBER);
+      jj_consume_token(RPAREN);
+positions.add(new GameConfig.Position(Integer.parseInt(x.image), Integer.parseInt(y.image)));
+    }
+  }
+
+  final public void requirementList(List requirements) throws ParseException {Token requirement;
+    requirement = jj_consume_token(QUOTED_STRING);
+requirements.add(requirement.image.substring(1, requirement.image.length() - 1));
+    label_3:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case COMMA:{
+        ;
+        break;
+        }
+      default:
+        jj_la1[3] = jj_gen;
+        break label_3;
+      }
+      jj_consume_token(COMMA);
+      requirement = jj_consume_token(QUOTED_STRING);
+requirements.add(requirement.image.substring(1, requirement.image.length() - 1));
+    }
+  }
+
+  final public void script(GameConfig gameConfig) throws ParseException {Token content;
+    jj_consume_token(SCRIPT);
+    jj_consume_token(LBRACE);
+token_source.SwitchTo(IN_SCRIPT);
+    content = jj_consume_token(SCRIPT_CONTENT);
+token_source.SwitchTo(DEFAULT);
+    jj_consume_token(RBRACE);
+gameConfig.addScript(content.image.trim());
+  }
+
+  final public void plugin(GameConfig gameConfig) throws ParseException {Token pluginName;
+    jj_consume_token(PLUGIN);
+    pluginName = jj_consume_token(IDENTIFIER);
+gameConfig.addPlugin(pluginName.image);
   }
 
   /** Generated Token Manager. */
@@ -81,13 +186,13 @@ gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[0];
+  final private int[] jj_la1 = new int[4];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {};
+      jj_la1_0 = new int[] {0xf00,0xf00,0x80000,0x80000,};
    }
 
   /** Constructor with InputStream. */
@@ -101,6 +206,7 @@ gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -114,7 +220,7 @@ gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 0; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -124,6 +230,7 @@ gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -141,6 +248,7 @@ gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -149,6 +257,7 @@ gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -157,6 +266,7 @@ gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
+    for (int i = 0; i < 4; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -207,12 +317,12 @@ gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[14];
+    boolean[] la1tokens = new boolean[26];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 0; i++) {
+    for (int i = 0; i < 4; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -221,7 +331,7 @@ gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
         }
       }
     }
-    for (int i = 0; i < 14; i++) {
+    for (int i = 0; i < 26; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

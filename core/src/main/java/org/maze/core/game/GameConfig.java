@@ -1,7 +1,6 @@
 package org.maze.core.game;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GameConfig {
     private int width;
@@ -12,6 +11,8 @@ public class GameConfig {
     private int goalY;
     private List<Item> items = new ArrayList<>();
     private List<Obstacle> obstacles = new ArrayList<>();
+    private List<String> scripts = new ArrayList<>();
+    private Set<String> plugins = new HashSet<>();
 
     // Getters and setters
     public void setWidth(int width) {
@@ -39,11 +40,23 @@ public class GameConfig {
     }
 
     public void addItem(String name, int x, int y) {
-        items.add(new Item(name, x, y));
+        items.add(new Item(name, Arrays.asList(new Position(x, y)), ""));
     }
 
-    public void addObstacle(int x, int y) {
-        obstacles.add(new Obstacle(x, y));
+    public void addItem(String name, List<Position> positions, String message) {
+        items.add(new Item(name, positions, message));
+    }
+
+    public void addObstacle(List<Position> positions, List<String> requirements) {
+        obstacles.add(new Obstacle(positions, requirements));
+    }
+
+    public void addScript(String script) {
+        // Add the script to a list or process it as needed
+    }
+
+    public void addPlugin(String pluginName) {
+        // Add the plugin name to a list or process it as needed
     }
 
     // Add these getter methods
@@ -78,28 +91,50 @@ public class GameConfig {
     public List<Obstacle> getObstacles() {
         return obstacles;
     }
+
+    public List<String> getScripts() {
+        return scripts;
+    }
+
+    public Set<String> getPlugins() {
+        return plugins;
+    }
+
     public static class Item {
         private String name;
-        private int x;
-        private int y;
+        private List<Position> positions;
+        private String message;
 
-        Item(String name, int x, int y) {
+        public Item(String name, List<Position> positions, String message) {
             this.name = name;
-            this.x = x;
-            this.y = y;
+            this.positions = positions;
+            this.message = message;
         }
 
-        public int getX() { return x; }
-        public int getY() { return y; }
+        public int getX() { return positions.get(0).getX(); }
+        public int getY() { return positions.get(0).getY(); }
 
         public String getName() { return name; }
     }
 
     public static class Obstacle {
+        private List<Position> positions;
+        private List<String> requirements;
+
+        public Obstacle(List<Position> positions, List<String> requirements) {
+            this.positions = positions;
+            this.requirements = requirements;
+        }
+
+        public int getX() { return positions.get(0).getX(); }
+        public int getY() { return positions.get(0).getY(); }
+    }
+
+    public static class Position {
         private int x;
         private int y;
 
-        Obstacle(int x, int y) {
+        public Position(int x, int y) {
             this.x = x;
             this.y = y;
         }

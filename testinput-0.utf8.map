@@ -1,0 +1,104 @@
+size (6,13)
+start (0,11)
+goal (1,2)
+script {
+sdfsdfdf
+}
+
+item "heavy helmet" {
+  at (4,9), (3,0), (1,7), (0,4)
+  message "J"
+}
+
+obstacle {
+  at (4,10), (0,3), (2,3), (2,5)
+  requires "blue vial", "bejeweled sceptre"
+}
+
+plugin ha.Ba.vOD.vrtmq.pVaF.xNKa
+
+plugin xwtUy.Pwf.yc.UAr.IU.whUTp
+
+obstacle {
+  at (4,5), (3,4)
+  requires "bejeweled sceptre", "blue vial"
+}
+
+script {
+test_script
+}
+
+item "sentient purple dagger" {
+  at (3,9)
+  message "tfJYIVVM"
+}
+
+item "ornate crown;<>"   {
+at(5   ,5
+)  , (
+  3,  11)message  "osdhQSVmV"     }item  "bejeweled gauntlet" {  at  (  2  ,   8)
+  ,   
+   (5
+   ,1  )   ,
+   (   2   ,
+  7)
+  ,
+     (
+  5
+,   3   )  ,  
+( 0 ,
+   9
+ )message"Q"  }   plugin RtZV.IEMfE.pIYA.KH.HxPb
+
+script {
+abcd
+}
+
+obstacle {
+  at (5,7), (5,2)
+  requires "bejeweled sceptre", "heavy helmet", "ornate crown;<>"
+}
+
+script {
+sdfsdfsdf
+}
+
+item "lustrous red gem,~;" {
+  at (3,5)
+  message "oVaN+mMsgK"
+}
+
+obstacle {
+  at (5,4)
+  requires "blue vial", "lustrous red gem,~;", "ornate crown;<>", "heavy helmet"
+}
+
+plugin Eo.Pu.CyyaG.ZjoL.jROU.KM
+
+script {
+sddsfsdfsdfdf
+}
+
+item "blue vial" {
+  at (1,8), (3,12)
+  message "lRngpjx.k"
+}
+
+plugin AO.JFCAZ.mTV.Vvxc.SOzo.Jj
+
+obstacle {
+  at (4,0), (4,11), (5,6), (4,7), (3,7)
+  requires "sentient purple dagger"
+}
+
+item "bejeweled sceptre" {
+  at (0,1)
+  message "TwdM"
+}
+
+plugin KDWCr.TIW.WZPk
+
+script {
+abdjfdhflljdf
+}
+

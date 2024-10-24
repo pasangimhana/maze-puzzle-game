@@ -6,23 +6,12 @@ PARSER_BEGIN(MazeParser)
 package org.maze.core.io;
 
 import org.maze.core.game.GameConfig;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MazeParser {
   public void parse(GameConfig gameConfig) throws ParseException {
-    size(gameConfig);
-    start(gameConfig);
-    goal(gameConfig);
-    while (true) {
-      try {
-        item(gameConfig);
-      } catch (ParseException e) {
-        try {
-          obstacle(gameConfig);
-        } catch (ParseException e2) {
-          break;
-        }
-      }
-    }
+    configuration(gameConfig);
   }
 }
 PARSER_END(MazeParser)
@@ -30,8 +19,8 @@ PARSER_END(MazeParser)
 SKIP : {
   " "
 | "\t"
-| "\n"
 | "\r"
+| "\n"
 }
 
 TOKEN : {
@@ -40,10 +29,46 @@ TOKEN : {
 | < GOAL: "goal" >
 | < ITEM: "item" >
 | < OBSTACLE: "obstacle" >
-| < COLON: ":" >
+| < SCRIPT: "script" >
+| < PLUGIN: "plugin" >
+| < AT: "at" >
+| < REQUIRES: "requires" >
+| < MESSAGE: "message" >
+| < LPAREN: "(" >
+| < RPAREN: ")" >
+| < LBRACE: "{" >
+| < RBRACE: "}" >
 | < COMMA: "," >
 | < NUMBER: (["0"-"9"])+ >
-| < IDENTIFIER: ["a"-"z","A"-"Z"] (["a"-"z","A"-"Z","0"-"9"])* >
+| < IDENTIFIER: (["a"-"z","A"-"Z"])+ (["a"-"z","A"-"Z","0"-"9",".","_"])* >
+| < QUOTED_STRING: "\"" (~["\""])* "\"" >
+}
+
+<IN_SCRIPT> TOKEN : {
+  < SCRIPT_CONTENT: (~["}"])+ >
+}
+
+<IN_SCRIPT> MORE : {
+  < "}" > : DEFAULT
+}
+
+<DEFAULT> TOKEN : {
+  < UNEXPECTED: ~[] >
+}
+
+void configuration(GameConfig gameConfig) :
+{}
+{
+  size(gameConfig)
+  start(gameConfig)
+  goal(gameConfig)
+  (
+    item(gameConfig)
+  | obstacle(gameConfig)
+  | script(gameConfig)
+  | plugin(gameConfig)
+  )*
+  <EOF>
 }
 
 void size(GameConfig gameConfig) :
@@ -51,7 +76,7 @@ void size(GameConfig gameConfig) :
   Token width, height;
 }
 {
-  <SIZE> <COLON> width=<NUMBER> <COMMA> height=<NUMBER>
+  <SIZE> <LPAREN> width=<NUMBER> <COMMA> height=<NUMBER> <RPAREN>
   {
     gameConfig.setWidth(Integer.parseInt(width.image));
     gameConfig.setHeight(Integer.parseInt(height.image));
@@ -63,7 +88,7 @@ void start(GameConfig gameConfig) :
   Token x, y;
 }
 {
-  <START> <COLON> x=<NUMBER> <COMMA> y=<NUMBER>
+  <START> <LPAREN> x=<NUMBER> <COMMA> y=<NUMBER> <RPAREN>
   {
     gameConfig.setStartX(Integer.parseInt(x.image));
     gameConfig.setStartY(Integer.parseInt(y.image));
@@ -75,7 +100,7 @@ void goal(GameConfig gameConfig) :
   Token x, y;
 }
 {
-  <GOAL> <COLON> x=<NUMBER> <COMMA> y=<NUMBER>
+  <GOAL> <LPAREN> x=<NUMBER> <COMMA> y=<NUMBER> <RPAREN>
   {
     gameConfig.setGoalX(Integer.parseInt(x.image));
     gameConfig.setGoalY(Integer.parseInt(y.image));
@@ -84,22 +109,94 @@ void goal(GameConfig gameConfig) :
 
 void item(GameConfig gameConfig) :
 {
-  Token name, x, y;
+  Token name, message;
+  List positions = new ArrayList();
 }
 {
-  <ITEM> <COLON> name=<IDENTIFIER> <COMMA> x=<NUMBER> <COMMA> y=<NUMBER>
+  <ITEM> name=<QUOTED_STRING> <LBRACE>
+  <AT> positionList(positions)
+  <MESSAGE> message=<QUOTED_STRING>
+  <RBRACE>
   {
-    gameConfig.addItem(name.image, Integer.parseInt(x.image), Integer.parseInt(y.image));
+    gameConfig.addItem(name.image.substring(1, name.image.length() - 1), positions, message.image.substring(1, message.image.length() - 1));
   }
 }
 
 void obstacle(GameConfig gameConfig) :
 {
+  List positions = new ArrayList();
+  List requirements = new ArrayList();
+}
+{
+  <OBSTACLE> <LBRACE>
+  <AT> positionList(positions)
+  <REQUIRES> requirementList(requirements)
+  <RBRACE>
+  {
+    gameConfig.addObstacle(positions, requirements);
+  }
+}
+
+void positionList(List positions) :
+{
   Token x, y;
 }
 {
-  <OBSTACLE> <COLON> x=<NUMBER> <COMMA> y=<NUMBER>
+  <LPAREN> x=<NUMBER> <COMMA> y=<NUMBER> <RPAREN>
   {
-    gameConfig.addObstacle(Integer.parseInt(x.image), Integer.parseInt(y.image));
+    positions.add(new GameConfig.Position(Integer.parseInt(x.image), Integer.parseInt(y.image)));
+  }
+  (
+    <COMMA> <LPAREN> x=<NUMBER> <COMMA> y=<NUMBER> <RPAREN>
+    {
+      positions.add(new GameConfig.Position(Integer.parseInt(x.image), Integer.parseInt(y.image)));
+    }
+  )*
+}
+
+void requirementList(List requirements) :
+{
+  Token requirement;
+}
+{
+  requirement=<QUOTED_STRING>
+  {
+    requirements.add(requirement.image.substring(1, requirement.image.length() - 1));
+  }
+  (
+    <COMMA> requirement=<QUOTED_STRING>
+    {
+      requirements.add(requirement.image.substring(1, requirement.image.length() - 1));
+    }
+  )*
+}
+
+void script(GameConfig gameConfig) :
+{
+  Token content;
+}
+{
+  <SCRIPT> <LBRACE> 
+  {
+    token_source.SwitchTo(IN_SCRIPT);
+  }
+  content=<SCRIPT_CONTENT>
+  {
+    token_source.SwitchTo(DEFAULT);
+  }
+  <RBRACE> 
+  {
+    gameConfig.addScript(content.image.trim());
+  }
+}
+
+void plugin(GameConfig gameConfig) :
+{
+  Token pluginName;
+}
+{
+  <PLUGIN> pluginName=<IDENTIFIER>
+  {
+    gameConfig.addPlugin(pluginName.image);
   }
 }

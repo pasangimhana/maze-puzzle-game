@@ -21,33 +21,69 @@ public interface MazeParserConstants {
   /** RegularExpression Id. */
   int OBSTACLE = 9;
   /** RegularExpression Id. */
-  int COLON = 10;
+  int SCRIPT = 10;
   /** RegularExpression Id. */
-  int COMMA = 11;
+  int PLUGIN = 11;
   /** RegularExpression Id. */
-  int NUMBER = 12;
+  int AT = 12;
   /** RegularExpression Id. */
-  int IDENTIFIER = 13;
+  int REQUIRES = 13;
+  /** RegularExpression Id. */
+  int MESSAGE = 14;
+  /** RegularExpression Id. */
+  int LPAREN = 15;
+  /** RegularExpression Id. */
+  int RPAREN = 16;
+  /** RegularExpression Id. */
+  int LBRACE = 17;
+  /** RegularExpression Id. */
+  int RBRACE = 18;
+  /** RegularExpression Id. */
+  int COMMA = 19;
+  /** RegularExpression Id. */
+  int NUMBER = 20;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 21;
+  /** RegularExpression Id. */
+  int QUOTED_STRING = 22;
+  /** RegularExpression Id. */
+  int SCRIPT_CONTENT = 23;
+  /** RegularExpression Id. */
+  int UNEXPECTED = 25;
 
   /** Lexical state. */
   int DEFAULT = 0;
+  /** Lexical state. */
+  int IN_SCRIPT = 1;
 
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
     "\" \"",
     "\"\\t\"",
-    "\"\\n\"",
     "\"\\r\"",
+    "\"\\n\"",
     "\"size\"",
     "\"start\"",
     "\"goal\"",
     "\"item\"",
     "\"obstacle\"",
-    "\":\"",
+    "\"script\"",
+    "\"plugin\"",
+    "\"at\"",
+    "\"requires\"",
+    "\"message\"",
+    "\"(\"",
+    "\")\"",
+    "\"{\"",
+    "\"}\"",
     "\",\"",
     "<NUMBER>",
     "<IDENTIFIER>",
+    "<QUOTED_STRING>",
+    "<SCRIPT_CONTENT>",
+    "\"}\"",
+    "<UNEXPECTED>",
   };
 
 }

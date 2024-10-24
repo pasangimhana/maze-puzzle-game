@@ -10,20 +10,22 @@ allprojects {
     repositories {
         mavenCentral()
     }
-}
 
-subprojects {
     apply plugin: 'java'
 
     sourceCompatibility = '21'
     targetCompatibility = '21'
+}
 
+subprojects {
     dependencies {
         testImplementation platform('org.junit:junit-bom:5.10.0')
         testImplementation 'org.junit.jupiter:junit-jupiter'
+        implementation 'org.python:jython-standalone:2.7.2'
     }
 
     test {
         useJUnitPlatform()
     }
 }
+

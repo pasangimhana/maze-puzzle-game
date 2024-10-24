@@ -1,104 +1,39 @@
-size (6,13)
-start (0,11)
-goal (1,2)
-script {
-sdfsdfdf
+size (10,10)
+start (0,0)
+goal (9,9)
+
+item "Key" {
+  at (5,5), (4,5), (5,6)
+  message "You found a key!"
 }
 
-item "heavy helmet" {
-  at (4,9), (3,0), (1,7), (0,4)
-  message "J"
+item "Potion" {
+  at (7,3) , (7,2), (4,7)
+  message "You found a potion!"
 }
 
-obstacle {
-  at (4,10), (0,3), (2,3), (2,5)
-  requires "blue vial", "bejeweled sceptre"
+item "Sword" {
+  at (2,8), (1,1), (1,2)
+  message "You found a sword!"
 }
 
-plugin ha.Ba.vOD.vrtmq.pVaF.xNKa
-
-plugin xwtUy.Pwf.yc.UAr.IU.whUTp
-
-obstacle {
-  at (4,5), (3,4)
-  requires "bejeweled sceptre", "blue vial"
-}
-
-script {
-test_script
-}
-
-item "sentient purple dagger" {
-  at (3,9)
-  message "tfJYIVVM"
-}
-
-item "ornate crown;<>"   {
-at(5   ,5
-)  , (
-  3,  11)message  "osdhQSVmV"     }item  "bejeweled gauntlet" {  at  (  2  ,   8)
-  ,   
-   (5
-   ,1  )   ,
-   (   2   ,
-  7)
-  ,
-     (
-  5
-,   3   )  ,  
-( 0 ,
-   9
- )message"Q"  }   plugin RtZV.IEMfE.pIYA.KH.HxPb
-
-script {
-abcd
+item "Map" {
+  at (4,4)
+  message "You found a map!"
 }
 
 obstacle {
-  at (5,7), (5,2)
-  requires "bejeweled sceptre", "heavy helmet", "ornate crown;<>"
+  at (2,2), (3,3), (4,4)
+  requires "Potion"
 }
+
+plugin edu.curtin.gameplugins.Teleport
+
+plugin edu.curtin.gameplugins.Penalty
+
+plugin edu.curtin.gameplugins.Prize
 
 script {
-sdfsdfsdf
+from reveal import Reveal
+Reveal(gameAPI).execute()
 }
-
-item "lustrous red gem,~;" {
-  at (3,5)
-  message "oVaN+mMsgK"
-}
-
-obstacle {
-  at (5,4)
-  requires "blue vial", "lustrous red gem,~;", "ornate crown;<>", "heavy helmet"
-}
-
-plugin Eo.Pu.CyyaG.ZjoL.jROU.KM
-
-script {
-sddsfsdfsdfdf
-}
-
-item "blue vial" {
-  at (1,8), (3,12)
-  message "lRngpjx.k"
-}
-
-plugin AO.JFCAZ.mTV.Vvxc.SOzo.Jj
-
-obstacle {
-  at (4,0), (4,11), (5,6), (4,7), (3,7)
-  requires "sentient purple dagger"
-}
-
-item "bejeweled sceptre" {
-  at (0,1)
-  message "TwdM"
-}
-
-plugin KDWCr.TIW.WZPk
-
-script {
-abdjfdhflljdf
-}
-

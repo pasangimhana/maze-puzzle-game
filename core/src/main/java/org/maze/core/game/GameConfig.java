@@ -14,7 +14,7 @@ public class GameConfig {
     private List<String> scripts = new ArrayList<>();
     private Set<String> plugins = new HashSet<>();
 
-    // Getters and setters
+    
     public void setWidth(int width) {
         this.width = width;
     }
@@ -52,14 +52,14 @@ public class GameConfig {
     }
 
     public void addScript(String script) {
-        // Add the script to a list or process it as needed
+        scripts.add(script);
     }
 
     public void addPlugin(String pluginName) {
-        // Add the plugin name to a list or process it as needed
+        plugins.add(pluginName);
     }
 
-    // Add these getter methods
+    
     public int getWidth() {
         return width;
     }
@@ -100,6 +100,14 @@ public class GameConfig {
         return plugins;
     }
 
+    public List<String> getPluginClassNames() { return new ArrayList<>(plugins);
+    }
+
+    public List<String> getScriptClassNames() { return new ArrayList<>(scripts);
+    }
+
+
+
     public static class Item {
         private String name;
         private List<Position> positions;
@@ -115,6 +123,10 @@ public class GameConfig {
         public int getY() { return positions.get(0).getY(); }
 
         public String getName() { return name; }
+
+        public List<Position> getPositions() {
+            return positions;
+        }
     }
 
     public static class Obstacle {
@@ -128,6 +140,10 @@ public class GameConfig {
 
         public int getX() { return positions.get(0).getX(); }
         public int getY() { return positions.get(0).getY(); }
+
+        public List<Position> getPositions() {
+            return positions;
+        }
     }
 
     public static class Position {

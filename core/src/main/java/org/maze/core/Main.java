@@ -3,14 +3,17 @@ package org.maze.core;
 import org.maze.core.game.GameEngine;
 import org.maze.core.game.GameConfig;
 import org.maze.core.io.InputParser;
+import org.maze.core.i18n.LocalizationManager;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         GameConfig config;
+        LocalizationManager locManager = LocalizationManager.getInstance();
         
         if (args.length > 0) {
             String configFile = args[0];
@@ -32,11 +35,17 @@ public class Main {
 
         try {
             gameEngine.initialize(config);
+            selectLanguage(locManager);
+            gameEngine.executeScripts();
             gameEngine.run();
         } catch (Exception e) {
             System.err.println("An error occurred: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private static void selectLanguage(LocalizationManager locManager) {
+        locManager.setLocale(Locale.forLanguageTag("en"));
     }
 
     private static GameConfig createDefaultConfig() {
@@ -48,7 +57,7 @@ public class Main {
         config.setGoalX(9);
         config.setGoalY(9);
         
-        // Add obstacles
+        
         config.addObstacle(
             Collections.singletonList(new GameConfig.Position(2, 2)),
             Collections.emptyList()
@@ -62,7 +71,7 @@ public class Main {
             Collections.emptyList()
         );
         
-        // Add items
+        
         config.addItem("Key", 
             Collections.singletonList(new GameConfig.Position(5, 5)),
             "You found a key!"
@@ -76,6 +85,12 @@ public class Main {
             "You found a sword!"
         );
         
+        
+        config.addPlugin("edu.curtin.gameplugins.Teleport");
+        config.addPlugin("edu.curtin.gameplugins.Penalty");
+        config.addPlugin("edu.curtin.gameplugins.Prize");
+        config.addScript("reveal.Reveal");
+
         return config;
     }
 }

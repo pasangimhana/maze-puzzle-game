@@ -9,8 +9,9 @@ repositories {
 }
 
 dependencies {
+    implementation project(':api')
     implementation 'net.java.dev.javacc:javacc:7.0.10'
-    // Add other dependencies as needed
+    implementation project(':plugins')
 }
 
 application {
